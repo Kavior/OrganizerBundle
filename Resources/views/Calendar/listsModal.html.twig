@@ -1,0 +1,174 @@
+<div id="listsModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{ 'Dołączone listy'|trans }} 
+        <div class="list-add-section">
+	        <select class="dc-event-list-select chosen-select" 
+	        data-options='
+		        {% for value, name in listsChoice %}
+		        	<option value="{{ value }}">{{ name }}</option>
+		        {% endfor %}
+	        '>
+	        {% for value, name in listsChoice %}
+	        	<option value="{{ value }}">{{ name }}</option>
+	        {% endfor %}
+	        </select>
+	        <a class="event-list-add" href="#"><i class="fa fa-plus-circle "></i> {{ 'Dodaj'|trans }}</a>
+	        <a href="{{ path('new_list') }}" target="_blank" class="btn-right">
+	        	<button class="btn btn-success btn-sm">{{ 'Utwóz nową listę'|trans }}</button>
+	        </a>
+	    </div>
+        </h4>
+      </div>
+      <div class="modal-body">
+      	<ul class="event-lists">
+      		
+      	</ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+var listsModal = $('#listsModal');
+var select = $('#listsModal .dc-event-list-select');
+var unfoldText = '{{ 'Pokaż elementy'|trans }}';
+var foldText = '{{ 'Schowaj elementy'|trans }}';
+
+$(document).on('click', '.event-list-add', function(){ //Add list to event
+	var selectedOption = select.find('option:selected');
+	
+	var listId = selectedOption.val();
+	if(listId != ''){
+		var listName = selectedOption.text();
+		var eventId = listsModal.attr('data-event');
+
+		$('.event-lists').appendListEntry(listName, listId);
+		removeListFromSelect(select, listId);
+		addListToEvent(listId, eventId);
+	}
+});
+
+$(document).on('click', '.dc-list-delete', function(){ //Delete list from event
+	var listEntry =  $(this).closest('.event-list-entry');
+	var idList = listEntry.data('list');
+	var listName = listEntry.find('.list-entry-name').text();
+	var idEvent = listsModal.data('event');
+
+	removeListFromEvent(idList, idEvent, listName); 
+});
+
+$(document).on('click', '.dc-list-expand', function(){//Show custom list elements
+	var icon = $(this);
+	var listEntry = $(this).closest('.event-list-entry');
+	var elementsList = listEntry.find('.list-entry-elements');
+	var listId = listEntry.data('list');
+	
+	if(elementsList.hasClass('expanded')){ //if list is expanded 
+		elementsList.slideUp();
+		elementsList.removeClass('expanded');
+		icon.attr('title', unfoldText);
+	}else{
+		if(listEntry.attr('data-loaded') == 'false'){ //if elements are not loaded
+			listEntry.showLoader();
+			
+			$.ajax({
+				type : 'POST',
+				url : location.href,
+				dataType : 'json',
+				data : { getListElements : listId },
+				success : function(data){
+					var elements = $.parseJSON(data);
+					elementsList.html('');
+					
+					for(i = 0; i < elements.length ; i++){
+						element = elements[i];					
+						var elementDiv = createListElementDiv(element);
+						
+						elementsList.append(elementDiv);
+						elementsList.addClass('expanded');
+					}
+					listEntry.attr('data-loaded', 'true');
+					elementsList.slideDown();
+					
+					icon.attr('title', foldText);
+				},
+				complete : function(){
+					listEntry.hideLoader();
+				}
+		 	});
+		}else{ //if already loaded, just show them
+			elementsList.slideDown();
+			icon.attr('title', foldText);
+			elementsList.addClass('expanded');
+		}
+		
+	}
+});
+
+function createListElementDiv(element){
+
+	var elementName = typeof(element['element_name']) != 'undefined' ? element['element_name'] : ''; 
+	var elementDiv = '<div class="list-entry-element"><div class="element-entry-name">'+
+		elementName + '__colon__</div>__desc__</div>__close__';
+		
+	//if the element has description, create container for this description
+  	if(typeof element['element_description'] != 'undefined'){
+		elementDescriptionDiv = '<div class="element-entry-description">'+
+		element['element_description'] + '</div>';
+
+		elementDiv = elementDiv.replace(/__desc__/, elementDescriptionDiv).replace(/__close__/, '</div>')
+		.replace(/__colon__/, ' : ');
+	}else{ 
+		elementDiv = elementDiv.replace(/__desc__/g, '').replace(/__close__/g, '')
+		.replace(/__colon__/, '');
+	}
+
+	return elementDiv;
+}
+
+function addListToEvent(idList, idEvent){	
+	$.ajax({
+		type : 'POST',
+		url : location.href,
+		data : { addListToEventList : idList , 
+			addListToEventEvent : idEvent },
+ 	});
+}
+
+function removeListFromEvent(idList, idEvent, listName){
+	var event = $('.event-list-entry[data-list="' + idList + '"]');
+	event.showLoader();
+	
+	$.ajax({
+		type : 'POST',
+		url : location.href,
+		data : { removeListId : idList , 
+			removeListEvent : idEvent },
+		success : function(data){
+			event.remove();
+			addListToSelect(select, idList, listName)
+		},
+		complete : function(){
+			event.hideLoader();
+		}
+ 	});
+	
+}
+
+function checkForChosenOptions(){//Remove chosen options from select
+	$('.event-list-entry').each(function(){
+	    var listId = $(this).data('list');
+		removeListFromSelect(select, listId);
+	});
+}
+</script>

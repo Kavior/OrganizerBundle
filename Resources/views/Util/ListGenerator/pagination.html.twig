@@ -1,0 +1,48 @@
+<div class="list-pagination">
+	{% if totalPagesCount <= 10 %}
+		{% for i in 1..totalPagesCount %}
+			<a href="#" class="ajax-sender page-number {% if i == page %} active {% endif %}" data-page="{{ i }}">{{ i }}</a>
+		{% endfor %}
+	{% else %}
+			{% if page > 5 %}
+				<a href="#" class="ajax-sender page-number" data-page="1">1</a>
+				...
+				{% for i in page - 3..page  %}
+					<a href="#" class="ajax-sender page-number {% if i == page %} active {% endif %}" data-page="{{ i }}">{{ i }}</a>
+				{% endfor %}
+			{% else %}
+				{% for i in 1..page  %}
+					<a href="#" class="ajax-sender page-number {% if i == page %} active {% endif %}" data-page="{{ i }}">{{ i }}</a>
+				{% endfor %}
+			{% endif %}
+			
+			{% if page + 5 < totalPagesCount %}
+				{% for i in page + 1..page + 3  %}
+					<a href="#" class="ajax-sender page-number {% if i == page %} active {% endif %}" data-page="{{ i }}">{{ i }}</a>
+				{% endfor %}  
+				...
+				<a href="#" class="ajax-sender page-number" data-page="{{ totalPagesCount }}">{{ totalPagesCount }}</a>
+			{% else %}
+				{% if page != totalPagesCount %}
+					{% for i in page + 1..totalPagesCount  %}
+						<a href="#" class="ajax-sender page-number {% if i == page %} active {% endif %}" data-page="{{ i }}">{{ i }}</a>
+					{% endfor %}  
+				{% endif %}	
+			{% endif %}
+			
+	{% endif %}
+	
+	{% if totalPagesCount > 2 %}
+	<div class="goto-page">
+		<div class="goto-desc">{{ 'Idź do strony'|trans }}</div>
+		<input class="goto-page-number" />
+		<button class="btn btn-xs btn-info goto-button ajax-sender">{{ 'Idź'|trans }}</button>
+	</div>
+	{% endif %}
+</div>	
+<script>
+	$('.goto-page-number').keyup(function(e){
+		if(e.which == 13)
+			$(this).closest('.goto-page').find('.goto-button').click();
+	});
+</script>

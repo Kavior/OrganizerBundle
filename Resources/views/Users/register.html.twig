@@ -1,0 +1,40 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+ {% block title %}{{ 'Rejestracja'|trans }}{% endblock %}
+ {% block fos_user_content %}
+<div class="bs-callout bs-callout-info register-panel">
+	
+	{{ form_start(form) }}
+	<div class="top-errors">
+		{{ form_errors(form) }}
+		{% if uniqueUserError is defined %} <ul><li>{{ uniqueUserError }}</li></ul> {% endif %}
+	</div>
+	<table class="register-table">
+		<tr>
+			<td>
+				{{ form_label(form.username) }}
+			</td>
+			<td>
+				{{ form_widget(form.username) }}
+			</td>
+		</tr>
+		{% for passwordField in form.plainPassword %}
+	    <tr>
+			<td>
+	        {{ form_label(passwordField, null, { 'attr': {'class': 'form-control'} }) }}
+	        </td>
+	        <td>
+	        {{ form_widget(passwordField, { 'attr': {'class': 'form-control'} }) }}
+	        </td>
+	    </tr>
+		{% endfor %}
+		
+	</table>
+	<div class="register-submit">
+		{{ form_widget(form.submit, { 'label': 'Zarejestruj'|trans }) }}
+	</div>
+	{{ form_end(form) }}
+</div>
+<div class="register-field">
+	<a href="{{ path('fos_user_security_login') }}">{{ 'Zaloguj się'|trans }}</a>
+</div>
+{% endblock %} 

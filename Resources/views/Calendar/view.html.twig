@@ -1,0 +1,126 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ 'Kalendarz'|trans }}{% endblock %}
+
+
+{% block header %}
+{{ parent() }}
+
+
+{% endblock %}
+
+{% block content %}
+<div id="calendar-container">
+	<div id="calendar"></div>
+</div>
+{% include 'OrganizerBundle:Calendar:listsModal.html.twig' %}
+{% include 'OrganizerBundle:Calendar:addCyclicalEventModal.html.twig' %}
+{% set userLocale = app.request.getLocale() %}
+<script>
+ $(document).ready(function () {
+	var dayCard = $('.day-card');
+	var content = $('.dc-content');
+	//if there is given date, i will open day card on with that date
+	 {% if eventDate is not null %} 
+		 $('.main').showLoader();
+		 eventDate = '{{ eventDate }}';
+	 {% endif %}
+
+	//Adjust datepicker translation to user locale
+	$('#calendar').datepicker($.extend({}, $.datepicker.regional['{{ userLocale }}'],{
+		dateFormat : 'yy-mm-dd',
+		//If event date is set, it will be used to open this day events card and show this event
+		{% if eventDate is not null %}
+		defaultDate : '{{ eventDate }}',
+		{% endif %}
+		
+		beforeShowDay: function(date) {
+	        return [true, 'currentDay'];
+	   }
+	}));
+
+	//If there is an event to show (id in GET)
+	{% if eventDate is not null %}
+		eventId = '{{ eventId }}';
+		eventDate = '{{ eventDate }}';
+		
+		setTimeout(function(){
+			openCurrentDay();
+		}, 50);
+		
+		//When event is loaded, fcus on it
+		$(document).ajaxStop(function() {
+			focusOnEvent(eventId);
+			 $(this).unbind("ajaxStop");
+		});
+	{% endif %}
+	
+	var calendar = $('#calendar .ui-datepicker');
+	var cyclicalEventsArea = $('.dc-cyclical-events');
+
+	function openCurrentDay(){
+		$('.currentDay').click();
+	}
+	
+	function focusOnEvent(eventId){
+		event = $('.dc-event[data-eventid="' + eventId + '"]');
+		event.addClass('event-focus');
+		event.attr("tabindex",-1).focus();
+	}
+	
+	$(document).on('change', '#calendar', function() { //When user selects a day
+		cyclicalEventsArea.hide();
+		$('.main').hideLoader();
+		$('.main').showLoader();
+		
+		var chosenDate = getCurrentDate();
+
+		var date = $(this).datepicker('getDate');
+	    var dayOfWeek = date.getUTCDay();
+
+		var cyclicalEventsContainer = cyclicalEventsArea.find('.dc-cyclical-events-container');
+	    
+		content.html('');
+		cyclicalEventsContainer.html('');
+		dayCard.attr('data-date', chosenDate);
+		$('.date-displayer').text(chosenDate);
+	
+		$.ajax({
+			type : 'POST',
+			url : location.href,
+			data : { chosenDate : chosenDate},
+			dataType : 'json',
+			success : function(data){	
+				var allEevents = $.parseJSON(data);
+
+				var normalEvents = allEevents[0];
+				var cyclicalEvents = allEevents[1];
+				
+				if(cyclicalEvents.length){
+					cyclicalEventsArea.show();
+				}
+				dayCard.show();
+				
+				if(cyclicalEvents.length){ 
+					for(i = 0; i < cyclicalEvents.length; i++){ //Add cyclical events, if found
+						var cyclicalEvent = cyclicalEvents[i];
+						cyclicalEventsContainer.addCyclicalEvent(cyclicalEvent['id_cyclical_event'], cyclicalEvent['cyclical_event_name'], cyclicalEvent['cyclical_event_description']);
+					}
+				}
+				
+				for(i = 0; i < normalEvents.length; i++){ //Add normal events to day card
+					var event = normalEvents[i];
+					content.addEvent(event['id_event'], event['event_name'] , event['event_weight'], event['event_description']);	
+				}
+
+			},
+			complete : function(){
+				$('.main').hideLoader();
+			}
+		});
+	});
+ });	 
+</script>
+{% include 'OrganizerBundle:Calendar:dayCard.html.twig' %}
+{% endblock %}
+

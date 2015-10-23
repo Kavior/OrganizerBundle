@@ -1,0 +1,23 @@
+<ul class="nav nav-sidebar">
+	<li>
+		<a href="{{ path('org_desktop') }}" {% if controllerName == 'desktop' %} class="active"{% endif %} >
+			<i class="fa fa-desktop"></i>{{ 'Pulpit'|trans }}
+		</a>
+	</li>
+	<li>
+		<a href="{{ path('calendar_view') }}" {% if controllerName == 'calendar' %} class="active"{% endif %}>
+			<i class="fa fa-calendar-check-o"></i>
+			{{ 'Kalendarz'|trans }}
+		</a>
+	</li>			
+	<li>
+		<a href="{{ path('cyclical_events') }}"{% if controllerName == 'cyclicalevents' %} class="active"{% endif %}>
+			<i class="fa fa-bell-o"></i>{{ 'Cykliczne zdarzenia'|trans }}
+		</a>
+	</li>
+	<li>
+		<a href="{{ path('custom_lists') }}" {% if controllerName == 'customlists' %} class="active"{% endif %}>
+			<i class="fa fa-list"></i>{{ 'Podręczne listy'|trans }}
+		</a>
+	</li>
+</ul>

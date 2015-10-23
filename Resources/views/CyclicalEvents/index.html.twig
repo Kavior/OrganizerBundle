@@ -1,0 +1,20 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ 'Cykliczne zdarzenia'|trans }} {% endblock %}
+
+{% block header %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+	{% set sort = [ { 'value':'CyclicalEventName','sortType':'asc','title':'Nazwa zdarzenia - rosnąco' }, 
+		{ 'value':'CyclicalEventName', 'sortType':'desc', 'title':'Nazwa zdarzenia - malejąco' },
+		{ 'value':'CreatedAt', 'sortType':'asc', 'title':'Utworzono - rosnąco' },
+		{ 'value':'CreatedAt', 'sortType':'desc', 'title':'Utworzono - malejąco' }
+	
+	] %}
+	
+	{% set additionalButtons = 'OrganizerBundle:CyclicalEvents:buttons.html.twig' %}
+	{% set listElementTemplate = 'OrganizerBundle:CyclicalEvents:listElementTemplate.html.twig' %}
+	{% include 'OrganizerBundle:Util:ListGenerator/list.html.twig' %}
+{% endblock %}

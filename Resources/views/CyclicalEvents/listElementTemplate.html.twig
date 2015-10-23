@@ -1,0 +1,15 @@
+<div class="listBox" data-pk="{{ element.idCyclicalEvent }}">
+	<input type="checkbox" class="list-checkbox"/>
+	<div class="ce-name-container">
+		<a class="cyclical-event-name" href="{{ path('cyclical_event_view', { id : element.idCyclicalEvent }) }}" 
+			target="_blank" data-placement="bottom" data-toggle="tooltip" data-original-title="{{ 'Podgląd'|trans }}">
+			{{ element.cyclicalEventName != '' ? element.cyclicalEventName|shortText : '-Bez nazwy-'|trans  }}
+			</a>
+	</div>
+	<div class="cyclical-event-created"><span class="created-text">{{ 'Utworzono:'|trans }}</span>
+		<div class="date-created">{{ element.createdAt|date('Y-m-d') }}</div>
+	</div>
+	<a href="{{ path('edit_cyclical_event', { id : element.idCyclicalEvent }) }}" class="cyclical-event-edit">
+		<i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="left" title="{{ 'Edytuj'|trans }}"></i>
+	</a>
+</div>

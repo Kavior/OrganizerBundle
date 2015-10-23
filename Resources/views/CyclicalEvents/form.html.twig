@@ -1,0 +1,252 @@
+{% extends 'OrganizerBundle::layout.html.twig' %} {% block title %}{{
+title }}{% endblock %} {% block header %} {{ parent() }} {% endblock %}
+
+{% block content %} 
+<div class="ce-form-container">
+	{{ form_start(form) }}
+	<div class="col col-md-9 col-xs-9 cyclical-event-col">
+		<div class="panel panel-default cyclical-event-form cyclical-event-panel">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ title }}</h3>
+			</div>
+			<div class="panel-body form-body">
+	
+				{{ form_errors(form) }} {{ form_row(form.cyclicalEventName) }} {{
+				form_row(form.cyclicalEventDescription) }} <label>{{ 'Waga'|trans }}</label>
+				<div id="slider"></div>
+	
+				<label>{{ 'Zdarzenie w każdy:'|trans }}</label>
+				<div class="container">
+					<div class="col col-md-4 col-xs-4">
+						<div class="form-group period-choice">
+							<div class="period-description"><input type="checkbox" /> {{ 'Miesiąc'|trans }}</div>
+							{{ form_row(form.cyclicalEventMonth) }}
+						</div>
+					</div>
+					<div class="col col-md-4 col-xs-4">
+						<div class="form-group period-choice">
+							<div class="period-description"><input type="radio" name="period-day" /> 
+							{{ 'Dzień tygodnia'|trans }}</div>
+							 {{ form_row(form.cyclicalEventWeekDay) }}
+						</div>
+					</div>
+					<div class="col col-md-3 col-xs-3">
+						<div class="form-group period-choice">
+							<div class="period-description"><input type="radio" name="period-day" /> 
+							{{ 'Dzień miesiąca'|trans }}</div>
+							 {{ form_row(form.cyclicalEventDay, { attr: { 'data-role' : 'ce-day' } }) }}
+						</div>
+					</div>
+				</div>
+				<div class="form-buttons">{{ form_widget(form.zapisz) }}</div>
+	
+	
+			</div>
+		</div>
+	</div>
+	<div class="col col-md-3 col-xs-3 cyclical-event-col last">
+		<div
+			class="panel panel-default cyclical-event-lists cyclical-event-panel">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ 'Dołączone listy'|trans }}</h3>
+			</div>
+			<div class="panel-body form-body ce-form-lists-container">
+				<div class="list-select-container">
+					<select class="list-select chosen-select">
+						{% for id, name in listsChoice %}
+							<option value="{{ id }}">{{ name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<ul class="lists"
+					data-prototype="{% filter escape %}{% include 'OrganizerBundle:CyclicalEvents:listTemplate.html.twig'  %}{% endfilter %}">
+					{# data-prototype="{{
+					form_widget(form.CyclicalEventHasLists.vars.prototype)|e }}" > #} {%
+					for list in form.CyclicalEventHasLists %}
+					<li>
+						<div class="cyclical-event-list">
+							{{ form_row(list.idList) }}
+							{% set listName = list.vars.value.getCustomLists.listName %}
+							<div class="added-list-name">{{ listName }}</div>
+							<div style="position:absolute; top:0; left: 0; width: 800px;">
+					
+							</div>
+							<div class="element-buttons">
+								<i class="fa fa-times remove-element" title="{{ 'Usuń'|trans }}"
+									data-placement="left" data-toggle="tooltip"></i>
+							</div>
+						</div>
+					</li> {% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	{% do form.CyclicalEventHasLists.setRendered %} 
+	{{ form_end(form) }}
+</div>
+<script>
+	$(function() {
+
+		//move sunday to the end of select
+		var daysSelect = $('#cyclicalEvent_cyclicalEventWeekDay');
+		var sunday = daysSelect.find('option').eq(1);
+		sunday.insertAfter(daysSelect.find('option').last());
+
+		//Days of a month range	
+		var spinner = $( ".spinner" ).spinner({
+			min: 1,
+			max: 31,
+		});
+
+		//If input with date is disabled, disallow the buttons to change its value
+		$('.ui-spinner-button').click(function(e){
+			if($(this).closest('.ui-spinner').find('input').prop('disabled')){
+				e.preventDefault(); 
+				return false;
+			}
+		});
+		
+		//Event weight slider
+		$("#slider").slider({
+			min: 0,
+            max: 10,
+            {% if weight is defined and weight is not null %} //Set the event's weight
+			value: '{{ weight }}',
+			{% else %}
+			value : 5,
+        	{% endif %}
+            
+            slide: function(event, ui) {
+                $("#cyclicalEvent_cyclicalEventWeight").val(ui.value);
+            }
+		}).slider("pips", {
+			rest: "label"
+		});
+		
+		$('.period-choice :radio').change(function(){ //Choice between day of the week and day of the month
+			var period = $(this).closest('.period-description').siblings('div').find('.period');
+			var otherPeriods = $('input[name="period-day"]').closest('.period-description').siblings('div')
+				.find('.period').not(period);
+
+			period.removeAttr('disabled');
+			otherPeriods.prop('disabled', 'disabled'); //Disable other choices
+			otherPeriods.val('');
+
+			if($(this).is(':checked')){ //Activate spinner
+				period.closest('.ui-spinner').find('.ui-spinner-button').css('display','block');
+				otherPeriods.closest('.ui-spinner').find('.ui-spinner-button').css('display','none');
+			}
+
+			period.val('');
+		});
+
+		$('.period-choice :checkbox').click(function(){ //Enable or disable period input on its checkbox click
+			var period = $(this).closest('.period-description').siblings('div').find('.period');
+			period.prop('disabled', function(i, v) { return !v; });
+			period.val('');
+		});
+
+		$('.period').each(function(){ //Hande checkboxes and radios on page load
+			if($(this).val() !== ''){
+				 $(this).closest('.period-choice').find('input[type=checkbox], input[type=radio]')
+						 .prop('checked', 'checked');
+				 $(this).removeAttr('disabled');
+			}else{
+				$(this).closest('.ui-spinner').find('.ui-spinner-button').css('display','none');
+			}
+			
+		});
+
+		$('input[data-role="ce-day"]').keydown( function(e){ 
+			var val = $(this).val() ;
+			
+			 // Allow: backspace, delete, tab, escape, enter and .
+	        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+	             // Allow: Ctrl+A, Command+A
+	            (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) || 
+	             // Allow: home, end, left, right, down, up
+	            (e.keyCode >= 35 && e.keyCode <= 40)) {
+	                 // let it happen, don't do anything
+	                 return;
+	        }else{ //Prevent from manually typing number out of 1-31 range
+	        	if(val.length == 2){
+					e.preventDefault();
+				}else if(val.length == 1){
+					if(  (val == 3 && e.keyCode !== 48 && e.keyCode !== 49) || val > 3 ){
+						e.preventDefault();
+					}		
+				}else if(e.keyCode == 48){
+					e.preventDefault();
+				}
+		    }
+	        // Ensure that it is a number and stop the keypress
+	        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+	            e.preventDefault();
+	        }				
+		});
+		
+		var select = $('.list-select');
+		
+		var addElemText = '{{ 'Dodaj listę'|trans }}';
+		var newListPath = '{{ path('new_list') }}';
+		var newListText = '{{ 'Utwórz listę'|trans }}';
+		
+		var $newElementButtons = $('<a href="#" class="add_list_link"><button type="button" class="btn btn-primary btn-sm">' + 
+				addElemText + '</button></a><a href="' + newListPath + '" class="btn-right btn btn-success btn-sm"' +
+				' target="_blank">' + newListText + '</a><div class="clear"></div>');
+		var $newLinkLi = $('<li></li>');
+
+	    $collectionHolder = $('.lists');
+
+	    $newElementButtons.insertBefore($collectionHolder);
+	    $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+	    //Add list to event
+	    $(document).on('click', '.add_list_link', function(e) {
+	        e.preventDefault();
+
+			if(select.val() !== '')
+	        	addElementForm($collectionHolder, $newLinkLi);
+
+	    });
+
+	    function addElementForm($collectionHolder, $newLinkLi) { //Append new list to event
+
+	        var prototype = $collectionHolder.data('prototype');
+	        var index = $collectionHolder.data('index');
+
+	        var listSelect =  $collectionHolder.closest('.cyclical-event-lists').find('.list-select');
+	        var listId = listSelect.val();
+	        var listName = listSelect.find('option:selected').text();
+
+	        var newForm = prototype.replace(/__name__/g, index).replace(/__idList__/, listId)
+	        .replace(/__listName__/, listName);
+
+	        $collectionHolder.data('index', index + 1);
+
+	        var $newFormLi = $('<li></li>').append(newForm);
+	        
+	        removeListFromSelect(select, listId);
+	        $collectionHolder.append($newFormLi);
+	    }
+	    
+	    $(document).on('click', '.remove-element', function(){ //Remove list from event
+	    	var removedListElem = $(this).closest('.cyclical-event-list').closest('li');
+	    	var listId = removedListElem.find('input').eq(2).val();
+			var listName = removedListElem.find('.added-list-name').text();
+
+	   		removedListElem.fadeOut(300, function(){ $(this).remove();});
+
+	   		if(!select.find('option[value="' + listId + '"]').length)
+	        	addListToSelect(select, listId, listName);
+	    });
+
+	    //Remove already attached lists from select
+	    $('.cyclical-event-list input').eq(0).each(function(){
+		    var listId = $(this).val();
+	    	removeListFromSelect(select, listId);
+		});
+	});
+</script>
+{% endblock %}

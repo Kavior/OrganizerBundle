@@ -1,0 +1,188 @@
+<div class="list-container">
+	<div class="panel panel-default list-buttons-container">
+		<div class="aligned-fields">
+			<div class="list-buttons">
+				{% if additionalButtons is defined %} {% include additionalButtons  %} {% endif %}
+				<button type="button" class="btn btn-danger ajax-sender remove-list-elements disabled">{{ 'Usuń zaznaczone elementy'|trans }}</button>
+			</div>
+			
+			<div class="list-search">
+				<i class="fa fa-search ajax-sender search-list" data-placement="bottom" 
+					data-toggle="tooltip" data-original-title="{{ 'Szukaj'|trans }}"></i>
+					<input type="text" class="list-search-input form-control"/>
+				<i class="fa fa-close ajax-sender clear-filters" data-placement="bottom" 
+					data-toggle="tooltip" data-original-title="{{ 'Wyczyść filtry'|trans }}"></i>
+			</div>
+		</div>
+		{% if sort is defined %}
+		<div class="order-field">
+			<span class="order-label">{{ 'Sortuj według'|trans ~':'}}</span>
+			<select class="order-select ajax-sender form-control">
+				<option value="">{{ '-- Wybierz --'|trans }}</option>
+				{% for s in sort %}
+					<option value="{{ s.value }}" data-sorttype="{{ s.sortType }}">{{ s.title|trans }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		{% endif %}
+		
+		
+		<div class="clear"></div>
+	</div>
+	<div class="list-body">
+		{% set template = 'OrganizerBundle:Util:ListGenerator/listBody.html.twig' %}
+		{% include template  %}
+	</div>	
+</div>
+
+<script>
+$(function(){
+	var totalPagesCount = parseInt('{{ totalPagesCount }}');
+	
+	$.fn.hasAttr = function(name) {  
+	   return this.attr(name) !== undefined;
+	};
+
+		
+	function initAjax(){
+		var url = '{{ path('list_generator') }}';
+		var entity = '{{ entity }}';
+		//Ajax sender is every elemnt which sends data from the list to the server (ex. sort type, page)
+		$('.ajax-sender').off('click change');
+		$('.ajax-sender').on( 'click change', function(event){
+			event.preventDefault();
+			//if able to send a request
+			if(!$(this).hasClass('disabled') && ( (event.type == 'change' && $(this).hasClass('order-select')) ||
+					 !$(this).hasClass('order-select') ) ){
+				var listContainer = $(this).closest('.list-container');
+				
+				var data = { entity : entity, template : '{{ template }}', listElementTemplate : '{{ listElementTemplate }}' };
+				var removeRequest = $(this).hasClass('remove-list-elements');
+				
+				if(removeRequest){
+					var c = confirm('{{ 'Zaznaczone elementy zostaną usunięte. Czy chcesz kontynuować?'|trans }}');
+					
+					if(!c) return false;
+					
+					var elementsToRemove = [];
+					$('.list-checkbox:checked').each(function(){
+						var id = $(this).parents('.listBox').data('pk');
+						elementsToRemove.push(id);
+					});
+
+					data.elementsToRemove = elementsToRemove;
+				}
+
+				if($(this).hasClass('clear-filters')){
+					//clear values
+					listContainer.removeAttr('data-query').removeAttr('data-page');
+					$(this).siblings('.list-search-input').val('');
+					listContainer.find('.order-select').val('');
+				}else{
+					//Page number sender
+					if($(this).hasClass('page-number')){
+						var pageNumber = $(this).data('page');
+						listContainer.attr('data-page', pageNumber);
+					}
+					
+					if($(this).hasClass('goto-button')){
+						var numberInput = $(this).closest('.goto-page').find('.goto-page-number');
+						var page = numberInput.val();
+
+						if( page > 0 && page <= totalPagesCount){
+							listContainer.attr('data-page', page);
+						}else{
+							return false;
+						}
+						
+					}
+
+					//List elements order choice
+					if($(this).hasClass('order-select')){
+						var order = $(this).val();
+	
+						if(order !== ''){
+							var orderType = $(this).find('option:selected').data('sorttype');
+							listContainer.attr('data-orderby', order).attr('data-ordertype', orderType);
+						}else{
+							return;
+						}
+					}
+
+					//Search element by name
+					if($(this).hasClass('search-list')){
+						var query = $(this).closest('.list-buttons-container').find('.list-search-input').val();
+						var filterColumn = '{{ filterColumn }}';
+						listContainer.attr('data-query', query);
+						listContainer.attr('data-filtercolumn', filterColumn);
+					}
+
+					//Add page to request
+					if(listContainer.hasAttr('data-page')){
+						var pageNumber = listContainer.attr('data-page');
+						data.page = pageNumber;
+					}
+					//Add sorting information to request
+					if(listContainer.hasAttr('data-orderby')){
+						var orderBy = listContainer.attr('data-orderby');
+						data.orderBy = orderBy;
+
+						var orderType = listContainer.attr('data-ordertype');
+						data.orderType = orderType;
+					}
+					//Add database column filter
+					if(listContainer.hasAttr('data-query')){
+						var query = listContainer.attr('data-query');
+						data.query = query;
+	
+						var filterColumn = listContainer.attr('data-filtercolumn');
+						data.filterColumn = filterColumn;
+					}
+
+				}
+				
+				$('#elements-container').showLoader();
+				
+				//Send a whole request
+				$.ajax({
+					type : 'post',
+					url : url,
+					data : data,
+					success : function(data){
+						$('.list-body').html(data); //Return all alements after filters, page etc..
+						if(removeRequest){
+							$('.remove-list-elements').addClass('disabled');
+						}
+
+						if(!$('.remove-list-elements').hasClass('disabled')){ //Disable "Delete" button on the list
+							$('.remove-list-elements').addClass('disabled');
+						}
+						
+						initAjax();
+					},
+					complete : function(){
+						$('#elements-container').hideLoader();
+					}
+				});
+			}
+		});
+	}
+	
+	var removalButton = $('.remove-list-elements');
+	$(document).on( 'change', '.list-checkbox',  function() { //When selecting element on the list
+		
+	    if(this.checked && removalButton.hasClass('disabled')) {
+	    	removalButton.removeClass('disabled');
+	    }else if(!this.checked && !removalButton.hasClass('disabled') && $(".listBox input:checkbox:checked").length == 0){
+	    	removalButton.addClass('disabled');
+		}
+	});
+
+	$('.list-search-input').keyup(function(e){ //Search by "enter" key
+		if(e.which == 13)
+			$(this).siblings('.search-list').click();
+	});
+
+	initAjax();
+});
+</script>

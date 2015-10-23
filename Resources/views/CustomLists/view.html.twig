@@ -1,0 +1,91 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ 'Lista podręczna'|trans }} {% endblock %}
+
+{% block header %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+	<div class="cyclical-event-view panel panel-default container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12">
+				<div class="alert alert-info row">
+					<div class="col col-md-6 col-xs-6">
+					{{ list.listName }}
+					</div>
+					<div class="col col-md-6 col-xs-6 buttons-col">
+						<a href="{{ path('edit_list', { id : list.idCustomList }) }}">
+							<button class="btn btn-warning">{{ "Edytuj listę"|trans }}</button>
+						</a>
+						<a href="#" class="list-remove" data-pk="{{ list.idCustomList }}">
+							<button class="btn btn-danger">{{ "Usuń listę"|trans }}</button>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col col-md-12 col-xs-12 list-view-header">
+				{{ 'Elementy'|trans }}
+				<hr>
+			</div>
+			{% set elements = list.getCustomListElements %}
+			{% if elements|length > 0 %}
+				<div class="col col-md-6 col-xs-6">
+					<ul class="list-view-elements">
+						{% for i in 0..elements|length - 1 %}	
+							{% set hasDescription = elements[i].elementDescription is not null %}
+							{% if i is even %}  {#odd#}
+							<li>
+								<div class="ce-element-name">{{ elements[i].elementName }}</div>
+								{% if hasDescription %}
+								<div class="ce-element-description">{{ ' - ' ~ elements[i].elementDescription }}</div>
+								{% endif %}
+							</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+				<div class="col col-md-6 col-xs-6">
+					<ul class="list-view-elements">
+						{% for i in 0..elements|length - 1 %}	
+							{% set hasDescription = elements[i].elementDescription is not null %}
+							{% if i is odd %}  {#even#}
+							<li>
+								<div class="ce-element-name">{{ elements[i].elementName }} </div>
+								{% if hasDescription %}
+								<div class="ce-element-description">{{ ' - ' ~ elements[i].elementDescription }}</div>
+								{% endif %}
+							</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+			{% else %}
+				<div class="no-elements">{{ 'Brak'|trans }}</div>
+			{% endif %}
+		</div>
+	</div>
+	<script>
+		//Remove the list
+		$('.list-remove').click(function(){ 
+			var conf = confirm('{{ 'Czy na pewno chcesz usunąć tą listę?'|trans }}');
+			if(!conf) return false;
+			
+			var listId = $(this).data('pk');
+
+			$.ajax({
+				type : 'post',
+				url : document.href,
+				data: { deletedListId : listId },
+				success : function(){
+					window.location.href = '{{ path('custom_lists') }}';
+				},
+				error : function(){
+					alert( '{{ 'Nie udało się usunąć listy'|trans }}' );
+				}
+			});
+		});
+	</script>
+{% endblock %}

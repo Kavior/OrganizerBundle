@@ -1,0 +1,457 @@
+<div class="day-card" data-date="">
+	<div class="dc-normal-events panel panel-default" >
+		<div class="dc-header panel-heading">
+			<div class="date-displayer"></div>
+			
+			<div class="dc-header-buttons">
+				<i class="fa fa-bars dc-toggle-list small-events" data-toggle="tooltip" data-placement="left" title="{{ "Zwiń zdarzenia"|trans }}"></i>
+				<i class="fa fa-times dc-close" data-toggle="tooltip" data-placement="left" title="{{ "Zamknij"|trans }}"></i>
+				<div class="dc-buttons-lower">
+					<i class="fa fa-calendar-plus-o dc-add" data-toggle="tooltip" data-placement="left" title="{{ "Dodaj zdarzenie"|trans }}"></i>
+					<i class="fa fa-eyedropper import-cyclical-event" data-toggle="tooltip" data-placement="left" title="{{ "Pobierz szablon z cyklicznego zdarzenia"|trans }}"></i>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="dc-content panel-body">
+			
+		</div>
+		<div class="dc-footer panel-heading">
+			<div class="dc-save" data-toggle="tooltip" data-placement="left" title="{{ "Zapisz zdarzenia"|trans }}">
+				<i class="fa fa-floppy-o"></i>
+			</div>
+		</div>
+	</div>
+	
+	<div class="dc-cyclical-events panel-transparent">
+		<div class="dc-cyclical-header alert alert-info">
+			{{ 'Cykliczne zdarzenia'|trans }}
+		</div>
+		<div class="dc-cyclical-events-container">
+		
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+<script>
+$(function(){
+	
+	//Translated names
+	var addButtonTitle = '{{ "Przypisz wagę"|trans }}';
+	var trashButtonTitle =  '{{ "Usuń zdarzenie"|trans }}';
+	var listButtonTitle =  '{{ "Listy"|trans }}';
+	var saveMsg = '{{ 'Wykryto niezapisane zmiany. Czy chcesz je zapisać?'|trans }}';
+	var collapseEvent = '{{ 'Zwiń zdarzenie'|trans }}';
+	var expandEvent = '{{ 'Rozwiń zdarzenie'|trans }}';
+	var collapseEvents = '{{ 'Zwiń zdarzenia'|trans }}';
+	var expandEvents = '{{ 'Rozwiń zdarzenia'|trans }}';
+	var weightTitle = '{{ 'Waga'|trans }}';
+	var rollUp = '{{ "Zwiń"|trans }}';
+	var eventNameText = '{{ "Nazwa"|trans }}';
+	var eventDescriptionText = '{{ "Opis"|trans }}';
+	var weightButtonTitle =  '{{ "Przypisz wagę"|trans }}';
+	var deleteTitle = '{{ 'Usuń'|trans }}';
+	var expandTitle = '{{ 'Pokaż elementy'|trans }}';
+
+	var event = $('.dc-event');
+	var cyclicalModal = $('#cyclicalEventModal');
+	var dayCard = $('.day-card');
+
+	var saveAjaxCalls = 0; //Ajax requests counter for saving purposes
+
+	function handleCalls(){ //Function to prevent closing events card when it is being saved
+		$(document).unbind('ajaxComplete');
+
+		if(saveAjaxCalls > 0){
+			$(document).ajaxComplete(function(){
+				handleCalls();
+			});	
+		}else{
+				closeDayCard();
+		}
+	}
+
+	function closeDayCard(){
+		$('.day-card').hide(300);
+	}
+	
+	$(document).on('click', '.dc-close', function(){ //Close the day-card
+		if(!handleUnsaved()){ //Not closing before events are saved
+			handleCalls();
+		}else{
+			closeDayCard();
+		}
+	});
+
+	//Events will be draggable
+	$('.dc-content').sortable();
+	$('.dc-content').droppable();
+
+	event.draggable({
+		connectToSortable:'.dc-content',
+		containment: '.dc-content',
+		scroll: false
+	});
+	
+	function goToContentBottom(){
+		var content = $('.dc-content');
+	  	var height = content[0].scrollHeight;
+	  	content.scrollTop(height);
+	}
+
+	function focusOnLastEvent(){
+		$('.dc-event .dc-event-name').last().focus();
+	}
+	
+	$.fn.addEvent = function(id, name, weight, description){
+
+		if (typeof(id)==='undefined') id = null;
+		if (typeof(name)==='undefined') name = null;
+		if (typeof(weight)==='undefined') weight = 5;
+		if (typeof(description)==='undefined') description = null;
+		
+		var eventIdData = id != null ? 'data-eventid="' + id + '"' : '';
+		var nameInputValue = name != null ? 'value="' + name + '"' : '';
+		var descriptionInputValue = description != null ? description : '';
+
+		//Divide event html into parts depending on whether they are necessary
+		var firstPart = '<i class="fa fa-bars dc-toggle-event" data-toggle="tooltip" data-placement="right" title="' + collapseEvent +'"></i>';
+
+		//NOT USED AT THE MOMENT
+		/* if(weight == null){
+			var appendWeightButton = '<i class="dc-event-weight-add fa fa-plus"' +
+				'data-toggle="tooltip" data-placement="right" title="' + weightButtonTitle +'"></i>';
+
+			var lastPart = '</div></div>';
+			firstPart += appendWeightButton;
+
+		}else{ */
+		var lastPart = '<div class="weight-slider"></div></div></div>';
+		//}
+
+		//Append event to current container
+		$(this).append('<div class="dc-event well container"' + eventIdData +'>' +
+				firstPart+
+				'<i class="fa fa-list-ol dc-event-lists"  data-toggle="tooltip" data-placement="right" title="' + listButtonTitle +'"></i>' +
+				'<i class="dc-event-delete fa fa-trash" data-toggle="tooltip" data-placement="right" title="' + trashButtonTitle +'"></i>' +
+				'<div class="event-inputs-container">'+
+				'<div class="dc-event-inputs col-md- col-xs-10">'+ eventNameText +
+				'<input class="dc-event-name form-control" '+ nameInputValue +'/>'+
+				eventDescriptionText +'<textarea class="dc-event-note form-control">'+ descriptionInputValue +
+				'</textarea></div><div class="dc-event-buttons-col col-md-2 col-xs-2">'+
+				lastPart
+				);
+
+		addTitleToWeightSlider(weightTitle);
+		var element = $(document).find('.weight-slider').last();
+		//New events must have slider initiated
+		initSlider(element, weight);
+		addTitleToWeightSlider(weightTitle);
+		goToContentBottom();
+		focusOnLastEvent();
+
+	}
+
+	$.fn.addCyclicalEvent = function(eventId, eventName, eventDescription){
+		//Create appropriate path to event preview
+		var eventViewPath = '{{ path('cyclical_event_view', { id : '__id__' }) }}';
+		var eventViewPath = eventViewPath.replace(/__id__/, eventId);
+		//If event has a description, add it
+		var desc = typeof eventDescription != 'undefined' 
+				? '<div class="dc-cyclical-description">'+ eventDescription +'</div>'
+				: '';
+
+		var cyclicalEvent = $('<div class="panel dc-cyclical-event" data-id="'+ eventId +'">' +
+				'<div class="dc-cyclical-name"><a href="' + eventViewPath +'" target="_blank">'+ eventName +'</a></div>' +
+				desc + '</div>');
+		$(this).append(cyclicalEvent);
+	}
+
+	//Add weight to event
+	$(document).on('click', '.dc-event-weight-add',function(){
+		var parentEvent = $(this).closest('.dc-event'); 
+		if (parentEvent.find('.weight-slider').length == 0){ //If there is no weight slider
+			if(parentEvent.hasClass('event-hidden')) parentEvent.toggleEvent('show');
+			parentEvent.find('.dc-event-buttons-col').append('<div class="weight-slider"></div>').fadeIn(1000);
+			initSlider(parentEvent.find('.weight-slider'));
+
+			$(this).hide();
+		}
+	});
+	
+	$('.dc-add').click(function(){ //Add event after clicking on "add event" button
+		$('.dc-content').addEvent();
+	});
+	
+	$(document).on('.dc-weight-slider', 'change mousemove', function() {
+	    $(this).next().html($(this).val());
+	});
+	
+	$.fn.save = function(){ //Save single event
+		var chosenDay = dayCard.attr('data-date');
+		var eventId = typeof ($(this).attr('data-eventid')) !== 'undefined' ? $(this).attr('data-eventid') : null ;
+		var order = $(this).index();
+		var title = $(this).find('.dc-event-name').val();
+		var content = $(this).find('.dc-event-note').val();
+		var eventSlider = $(this).find('.ui-slider');
+		var weight = eventSlider.length ? eventSlider.slider("value") : 5;
+		var elem = $(this);
+		saveAjaxCalls ++; //Add saving ajax call to those calls counter
+		
+		$.ajax({
+			type : 'POST',
+			url : location.href,
+			data : { eventId : eventId,
+					chosenDay : chosenDay, 
+					order : order,
+					title : title,
+					content : content,
+					weight : weight },
+			dataType : 'json',
+			success : function(data){
+				elem.attr('data-eventid', data);
+			},
+			complete : function(){
+				saveAjaxCalls--; //Reduce ajax call counter by one
+				if(saveAjaxCalls == 0)
+					$('.day-card').removeAttr('unsaved'); //Everything is saved, and app will not ask for save when day card is closed
+			}
+	 	}); 
+	 	
+	}
+
+	$('.dc-event-delete').off('click');
+	$(document).on('click', '.dc-event-delete', function(e){ //Delete event
+		var event = $(this).closest('.dc-event');
+		var eventId = event.data('eventid');
+		event.showLoader();
+		
+		$.ajax({
+			type : 'post',
+			url : document.href,
+			data : { 'deletedEventId' : eventId },
+			success : function(){
+				event.remove();
+			},
+			error : function(){
+				alert('{{ 'Nie udało się usunąć zdarzenia'|trans }}');
+			},
+			complete : function(){
+				event.hideLoader();
+			}
+		});
+		
+	});
+
+	$.fn.fillSelect = function(){ //Fill the select in with initial options stored in data-options attribute
+		var options = $(this).data('options');
+		$(this).find('option').remove();
+		$(this).append(options);
+		$(this).trigger("chosen:updated");
+	}
+
+	$('.dc-event-lists').off('click');
+	$(document).on('click', '.dc-event-lists', function(e){ //Show lists attached to the event
+		$('html').showLoader();
+		var event = $(this).closest('.dc-event');
+		var eventId = event.data('eventid');
+
+		if(typeof eventId == 'undefined'){ // Save unsaved event to obtain its id
+			event.save();
+		}
+		
+		var listsModal = $('#listsModal');
+		$('.event-lists').html('');
+		$('.dc-event-list-select').fillSelect();
+		
+		if(eventId != null){ //If event have already been saved
+			$.ajax({
+				type : 'post',
+				url : document.href,
+				data : { 'listsFromEvent' : eventId },
+				success : function(data){
+					var lists = $.parseJSON(data);						
+					
+					for(i = 0; i < lists.length; i++){
+						var list = lists[i];
+						listsModal.find('.event-lists').appendListEntry(list['list_name'], list['id_custom_list']);
+						
+					}
+					listsModal.attr('data-event', eventId);
+					checkForChosenOptions();
+					listsModal.modal() ;
+				},
+				error : function(){
+					alert('{{ 'Nie udało się odnaleźć list'|trans }}');
+				},
+				complete : function(){
+					$('html').hideLoader();
+				}
+			});
+		}else{
+			$( document ).ajaxComplete(function() { //otherwise, event is being saved and application will wait until it is complete
+				var eventId = event.data('eventid');
+				listsModal.attr('data-event', eventId);
+				$('html').hideLoader();
+				listsModal.modal() ;
+				$( document ).off('ajaxComplete');
+			});
+		}
+	});
+
+	$.fn.appendListEntry = function(listName, listId){ //Attach a list to event's custom lists
+		var newListEntry = $('<li class="event-list-entry" data-loaded="false" data-list="' + listId + '">' +
+				'<i class="fa fa-times dc-list-delete" title="'+ deleteTitle +'" data-placement="left" data-toggle="tooltip"></i>' +
+				'<div class="list-entry-name">' + listName + '</div>' +
+				'<i class="fa fa-arrows-v dc-list-expand" title="'+ expandTitle +
+				'" data-placement="left" data-toggle="tooltip"></i>' +
+				'<div class="list-entry-elements" ></div>' +
+			'</li>');
+		$(this).append(newListEntry);
+	}
+	
+	$('.dc-save').click(function(){ //Save all events
+		
+		var event = $('.dc-event');
+		if(event.length){
+			$('.dc-content').showLoader();
+			event.each(function(){
+				$(this).save();
+			});
+
+			$( document ).ajaxComplete(function() {
+				if(saveAjaxCalls == 0){
+					$('.dc-content').hideLoader();
+					$( document ).off('ajaxComplete');
+				}
+			}); 
+		}
+	});
+	
+	 $.fn.toggleEvent = function(action){ //Collapse or expand event
+
+		if (typeof(action)==='undefined') action = null;
+		 
+		if(action == 'show' || (action !== 'hide' && $(this).hasClass('event-hidden'))){ //Expand event
+			$(this).find('.event-short-info').remove();
+			$(this).children('.event-inputs-container').slideDown(300);
+			$(this).removeClass('event-hidden');
+		}else if($(this).find('.dc-short-desc').length == 0){ //Collapse event
+			$(this).children('.event-inputs-container').slideUp(300);
+			$(this).addClass('event-hidden');
+			var title = $(this).find('.dc-event-name').val();
+			//Leave list name only 
+			$(this).append('<div class="event-short-info"><div class="dc-toggle-event">' +
+				'<i class="fa fa-bars dc-toggle-list small-events" title="'+ expandEvent +
+				'" data-placement="left" data-toggle="tooltip"></i>' +
+				'</div><div class="dc-short-desc">'+ title +'</div></div>');
+		}
+
+	}
+	
+	$('.dc-toggle-list').click(function(){ //Toggle whole list of events
+		smallEventsClass = 'small-events';
+		//if events are minimalized
+		if($(this).hasClass(smallEventsClass) ){	
+			$(this).removeClass(smallEventsClass);
+			$(this).attr('data-original-title', expandEvents);
+	
+			$('.dc-event').each(function(){
+				$(this).toggleEvent('hide');
+			});
+		}else{
+			$(this).addClass(smallEventsClass);
+			$(this).attr('data-original-title', collapseEvents);
+			$('.dc-event').each(function(){
+				$(this).toggleEvent('show');
+			});
+		}
+	});
+	
+	$(document).on('click', '.dc-toggle-event', function(e){ //Toggle event on proper button click
+		e.stopPropagation();
+		$(this).closest('.dc-event').toggleEvent();
+	});
+	
+	$(document).on('click', '.dc-event', function(e){ //Show toggled element by clicking on its body
+		if( $(this).hasClass('event-hidden') &&  !$(e.target).is('.dc-event-delete') )
+			$(this).toggleEvent();
+	});
+
+	
+	$(document).on('click', '.import-cyclical-event', function(){
+		cyclicalModal.modal();
+	});
+
+	$(document).on('click', '.cyclical-event-add', function(e){//Import cyclical event as a template
+		e.preventDefault;
+		var selectedEventId = $(this).closest('.event-add-section').find('.cyclical-event-select').val();
+
+		if(selectedEventId != ''){
+			$('.modal-body').showLoader();
+			var chosenDay = dayCard.data('date');
+			
+			$.ajax({
+				url: document.href,
+				type : 'post',
+				data : { chosenCyclicalEvent : selectedEventId, cyclicalChosenDate : chosenDay},
+				success : function(data){
+					var parsed = $.parseJSON(data);
+					var event = parsed[0];
+					var newEventId = parsed[1];
+					
+					var eventName = event['cyclical_event_name'];
+					var eventDescription = event['cyclical_event_description'];
+					var eventWeight = event['cyclical_event_weight'];
+					
+					//Add cyclical event as a template for normal event
+					$('.dc-content').addEvent(newEventId , eventName, eventWeight, eventDescription);
+					$('.day-card').attr('unsaved', 'true');
+					cyclicalModal.modal('hide');
+				},
+				complete : function(){
+					$('.modal-body').hideLoader();
+				}
+			});
+		}
+	})
+
+	//detect changes in events
+	$(document).on('keyup paste', $('.dc-event-inputs input'), function(){
+		if(typeof $('.day-card').attr('unsaved') == typeof undefined){
+			$('.day-card').attr('unsaved', 'true');
+		}
+	});
+
+	function isDayUnsaved(){
+		return $('.day-card').attr('unsaved') == 'true';
+	}
+
+	function askForSave(){ //Check if there are unsaved events and ask for saving them
+		if(isDayUnsaved()){
+			var conf = confirm(saveMsg);
+
+			if(conf){
+				$('.dc-save').click();
+			}else{
+				$('.day-card').removeAttr('unsaved');
+				closeDayCard();
+			}
+		}
+		
+	}
+
+	function handleUnsaved(){
+		if(isDayUnsaved()){
+			askForSave();
+			return false
+		}
+		return true;
+	}
+	/*
+	$('.day-card').bind('dragstop', function(){ //Prevents from setting width of day card automatically
+		$(this).css('width', 'auto');
+	});
+	*/
+});
+</script>

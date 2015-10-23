@@ -1,0 +1,14 @@
+<div id="elements-container" class="panel panel-default" data-page="1">
+	<div class="panel-body">
+	{% if(elements|length == 0) %}
+		<span class="empty-message">{{ 'Brak elementów do wyświetlenia'|trans }}</span>
+	{% else %}
+		{% for element in elements %}
+			{% include listElementTemplate %}
+		{% endfor %}
+	{% endif %}		
+	</div>
+</div>
+<div class="panel panel-default list-pagination-container">
+	{% include 'OrganizerBundle:Util:ListGenerator/pagination.html.twig'  %}
+</div>

@@ -1,0 +1,611 @@
+@mixin xs-boxes{
+	.list-buttons-container {
+	    padding: 7px 6px;
+	}	
+	
+	.list-container {
+	    width: 555px;
+	}
+	
+	.listBox{
+		font-size: 9px;
+		margin: 7px 0 0 7px;
+		height: 144px;
+		width: 126px;;
+	}
+	
+	.list-body{
+		.panel-body{
+			padding: 7px 0 17px 7px;
+		}
+	}
+	
+	#elements-container{
+		min-height: 328px;
+	}
+}
+
+@mixin smaller-buttons-container {
+	.list-buttons-container{
+		.btn{
+			font-size: 10px;
+		}
+	}
+	
+	.aligned-fields{
+		padding-top: 7px !important;;
+	}
+	
+	.list-search{
+		padding: 3px 14px 0 14px;
+
+		.list-search-input{
+			width: 129px; 
+			font-size: 10px; 
+			padding: 4px; 
+			height: 23px;
+		}
+	}
+	
+	.order-label{
+		font-size: 11px;
+	}
+	
+	.order-select{
+		font-size: 10px;
+		padding: 0px;
+		height: 24px;
+	}
+}
+
+@media (max-width: 767px){
+
+	.desktop-container {
+	    height: 300px;
+	    width: 562px;
+	    
+	    .desktop-panel{
+	    	width: 183px;
+	    }
+	    
+	    .desktop-events-list{
+	    	li{
+	    		a,
+	    		li{
+	    			font-size: 10px;
+	    		}
+	    	}
+	    }
+	}
+	
+	.list-container{
+		 margin: 10px auto 0;
+	}
+	
+	.main {
+	    padding-left: 153px;
+	}
+	
+	#calendar {
+    	font-size: 19px; 
+    }
+    
+     .cyclical-event-view{
+		width: 423px;
+	}
+	
+	.navbar-nav {
+	    margin: 0;
+	    text-align: right;
+	}
+	
+	.navbar{
+		ul{
+	    	li{
+	    		display: inline-block;
+	    	}
+	    }
+	    
+	}
+	
+	.pull-left{
+		float: none !important;
+	}
+	
+	.sidebar{
+		&.col-sm-3{
+	    	width: 140px;
+	    }
+	}
+	
+	.day-card {
+		/*left: 181px;*/
+	}
+	
+	.alert .btn {
+	    font-size: 11px;
+	    margin: 5px;
+	}
+	
+	.custom-list-form{
+		width: 560px;
+	}
+	
+	@include xs-boxes;
+	@include smaller-buttons-container;
+} // end 767
+
+
+@media (min-width: 768px) and (max-width: 860px){
+	
+	.desktop-container {
+	    height: 300px;
+	    width: 550px;
+	    
+	    .desktop-panel{
+	    	width: 179px;
+	    }
+	    
+	    .desktop-events-list{
+	    	li{
+	    		a,
+	    		li{
+	    			font-size: 10px;
+	    		}
+	    	}
+	    }
+	}
+	
+	#calendar {
+    	font-size: 28px; 
+    }
+    
+    .cyclical-event-view{
+		width: 500px;
+	}
+	
+	.day-card {
+	/*	left: 181px;*/
+	}
+	
+	.col{
+		padding: 0 5px !important;
+	}
+	
+	.custom-list-form{
+		width: 560px;
+	}
+	
+	@include xs-boxes;
+	@include smaller-buttons-container;
+
+} // end 860
+
+@media (min-width: 861px) and (max-width: 980px){
+	
+	.desktop-container {
+	    height: 330px;
+	    width: 618px;
+	    
+	    .desktop-panel{
+	    	width: 202px;
+	    }
+	    
+	    .desktop-events-list{
+	    	li{
+	    		a,
+	    		li{
+	    			font-size: 10px;
+	    		}
+	    	}
+	    }
+	}
+	
+	.list-buttons {
+	    font-size: 10px;
+	}
+	
+	.list-container {
+	    width: 626px;
+	}
+	
+	.listBox {
+	    height: 126px;
+	    width: 125px;
+	     font-size: 10px !important;
+	}
+	
+	.date-created {
+	    font-size: 12px;
+	}
+	
+	.main {
+	   /* padding-left: 0px;*/
+	}
+	
+	.list-body{
+		.panel-body{
+			padding-left: 11px;
+		}
+	}
+	
+	.cyclical-event-view{
+		width: 529px;
+	}
+	
+	.custom-list-form{
+		width: 660px;
+	}
+	.cyclical-event-panel{
+		.btn{
+			padding: 2px 6px;
+		}
+	}
+	
+	@include smaller-buttons-container;
+} // end 980
+
+@media (min-width: 981px) and (max-width: 1120px){
+	.list-buttons {
+	    font-size: 11px;
+	}
+	
+	.desktop-container {
+	    height: 420px;
+	    width: 754px;
+	    
+	    .desktop-panel{
+	    	width: 247px;
+	    }
+	    
+	    .desktop-events-list{
+	    	li{
+	    		a,
+	    		li{
+	    			font-size: 10px;
+	    		}
+	    	}
+	    }
+	}
+	
+	.list-container {
+	    width: 726px;
+	}
+	
+	.listBox{
+		width: 149px;
+		
+		.cyclical-event-edit {
+			font-size: 14px;
+		}
+		
+		.list-name-container{
+			font-size: 12px;
+		}
+	}
+	
+	.list-elem-created{
+		padding-top: 14px;
+	}
+	
+	.list-body{
+		.panel-body{
+			padding-left: 15px;
+		}
+	}
+	
+	.list-elem-created {
+	    padding-top: 2px;
+	}
+}
+
+@media (min-width: 1121px) and (max-width: 1230px){
+	.desktop-container {
+	    height: 440px;
+	    width: 907px;
+	    
+	    .desktop-panel{
+	    	width: 298px;
+	    }
+	    
+	    .desktop-events-list{
+	    	li{
+	    		a,
+	    		li{
+	    			font-size: 13px;
+	    		}
+	    	}
+	    }
+	}
+}
+
+@media (max-width: 860px){
+	.desktop-container{
+		.desktop-panel{
+			.desktop-panel-header {
+		    	font-size: 14px;
+		    }
+		}
+		.desktop-top-panel{
+	    	font-size: 14px;
+	    }
+	}
+	
+	.cyclical-event-panel{
+		.btn{
+			padding: 2px 6px;
+			font-size: 10px;
+		}
+	}
+	
+	.day-card {
+	    margin-left: -192px;
+	}
+}
+
+@media (max-width: 980px){
+	.alert{
+		.btn{
+			padding: 2px;
+			font-size: 11px;
+		}
+	}
+	
+	.listBox{
+		.list-name-container{
+			font-size: 11px;
+   	 		padding: 0 9px;
+		}
+	}
+	
+	
+}
+
+@media (max-width: 1120px){
+		
+	.sidebar{
+		padding: 13px 5px 5px 5px;
+		li{
+			a{
+				font-size: 10px;
+				padding: 4px 7px;
+			}
+		}
+	}
+	/*
+	.col-sm-3 {
+	    width: 20%;
+	}
+	.col-sm-offset-3 {
+		margin-left: 20%;
+	}
+		
+	.col-sm-9 {
+	    width: 80%;
+	}
+	
+	main.col-sm-9 {
+	    width: 100%;
+	}
+	*/
+	
+	.nav{
+		padding-top: 0px; 
+	}
+	
+	.day-card {
+		top: 38px;
+	}
+	
+	.dc-normal-events {
+	    width: 362px;
+	    
+	    .dc-header {
+		    font-size: 14px;
+		    height: 51px;
+		    
+		    .date-displayer {
+    			font-size: 22px;
+    		}
+		}
+		
+		
+	}
+	
+	.dc-event{
+		padding: 6 20px 0 5px;
+	}
+	
+	.cyclical-event-col {
+	    padding:  0 5px 0 0;
+	}
+	
+	.custom-list-form {
+		.elements {
+			height: 242px;
+	  	  padding: 0;
+	  	}
+	  	
+	  	.custom-list-element{
+	  		textarea{
+	  			font-size: 10px;
+	  		}
+	  	}
+	}
+	
+	#elements-container {
+	    min-height: 330px;
+	}
+	
+	.desktop-container{
+		margin-left: 38px;
+	}	
+	
+	.dc-cyclical-events{
+		.dc-cyclical-events-container {
+	    	height: 436px;
+	    }
+	}
+	
+	.desktop-events-list{
+		i{
+			font-size: 10px;
+		}
+	}
+	
+	.listBox{
+		.list-checkbox {
+		    right: 5px;
+		    top: 2px;
+		}
+		
+		.list-elem-created{
+			.created-text {
+			    font-size: 12px;
+			}
+		}
+	}
+	
+	.cyclical-event-form {
+	    
+	    
+	    .col{
+			font-size: 10px;
+			padding: 0 5px;
+		}
+		
+		.period {
+		    font-size: 10px;
+		    padding: 2px;
+		}
+	}
+	
+	.cyclical-event-lists{
+		.panel-body{
+			padding: 9px;
+		}
+		
+		.chosen-container{
+			width: 100% !important;
+		}
+	}
+	
+	.ce-form-container {
+    	height: 466px;
+    	width: 100%;
+	}
+	
+	@include smaller-buttons-container;
+}//end 1120
+
+@media (min-width: 1121px) and (max-width: 1250px){
+	.sidebar{
+		li{
+			a{
+				font-size: 16px;
+			}
+		}
+	}
+}
+
+@media (min-width: 1220px){
+	.ce-form-container{
+		/*height: 540px;*/
+	}
+	
+
+	.cyclical-event-panel{
+		
+		textarea{
+			min-height: 85px;
+		}
+	}
+}
+
+@media (min-width: 1580px){
+	.main-container {
+	    padding-top: 70px;
+	}
+
+	.desktop-container {
+	    height: 650px;
+	    width: 1130px;
+	    
+	    .desktop-panel{
+	    	width: 372px;
+	    }
+	    
+	}
+	
+	#calendar {
+    	font-size: 40px; 
+    	margin: 29px 102px;
+    	
+    }
+    .dc-normal-events{
+    	
+    	.dc-content {
+    		height: 545px !important;
+    	}
+	}
+	
+	.dc-event{
+		.dc-event-inputs textarea {
+		    min-height: 100px;
+		}
+	}
+	
+	.day-card{
+		 top: 75px;
+	}
+	
+	.list-body{
+		.panel-body{
+			padding: 9px 0 21px 18px;
+		}
+	}
+	
+	.listBox {
+	    height: 207px;
+	    width: 262px;
+	    
+	    .cyclical-event-name,
+	    .custom-list-name{
+	    	font-size: 20px;
+	    }
+	    
+	    .cyclical-event-created {
+		    font-size: 16px;
+		    padding-top: 37px;
+		}
+		
+		.custom-list-edit,
+		.cyclical-event-edit{
+			bottom: 26px;
+		    font-size: 27px;
+		    position: absolute;
+		    right: 21px;
+		}
+	}
+	
+	
+	
+	#elements-container{
+		min-height: 492px;
+	}
+	
+	.list-container {
+	    width: 1182px;
+	}
+	
+	.list-name-container,
+	.ce-name-container{
+		font-size: 14px;
+	}
+	
+	.list-elem-count {
+	    padding: 25px 0;
+	}
+	
+	
+}

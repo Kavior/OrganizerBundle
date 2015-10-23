@@ -1,0 +1,92 @@
+<head>
+	<title>{% block title %}Organizer{% endblock %}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" href="{{ asset('bundles/organizer/images/favicon.png') }}" type="image/x-icon"/>
+	{# 'bundles/organizer/css/*'  filter='cssrewrite' #}
+	{% stylesheets filter='cssrewrite'
+		"bundles/organizer/css/*.css"  
+	    "bundles/organizer/css/jquery-ui-slider-pips.css"
+	 	"bundles/organizer/css/main.css"
+	    "bundles/organizer/css/responsive.css"
+		"bundles/organizer/css/dark.css"
+		  
+	%}
+	<link type="text/css" rel="stylesheet" href="{{ asset_url }}" />
+	
+	{% endstylesheets %}
+	
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	{% javascripts
+		
+		"@OrganizerBundle/Resources/public/js/jquery-2.1.4.min.js"
+	 	"@OrganizerBundle/Resources/public/js/jquery-ui.min.js"
+		"@OrganizerBundle/Resources/public/js/bootstrap.js"   
+		"@OrganizerBundle/Resources/public/js/jquery-ui-slider-pips.js" 
+		"@OrganizerBundle/Resources/public/js/chosen.jquery.min.js" 
+		"@OrganizerBundle/Resources/public/js/loadingoverlay.min.js" 
+		"@OrganizerBundle/Resources/public/js/datepicker-pl.js"
+		'../app/Resources/public/js/*'
+	    "@OrganizerBundle/Resources/public/js/init.js"
+	%}
+	<script type="text/javascript" src="{{ asset_url }}"></script>
+	    
+	{% endjavascripts %}
+</head>
+<body>
+
+{% block header %}
+ 	<nav class="navbar navbar-inverse navbar-fixed-top">
+ 	
+		<ul class="nav navbar-nav navbar-right">
+			<li>
+				<a href="#" data-toggle="tooltip" data-placement="left" data-original-title="{{ 'Informacje'|trans }}">
+					<div><i tabindex="0" class="fa fa-info-circle bs-popover app-info" data-toggle="popover" data-trigger="focus" 
+					data-placement="bottom" data-content="{{ get_section_info()|raw }}"
+					
+					></i></div>
+				</a>
+			</li>
+			<li>
+    			<div class="dropdown">
+			  	  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    {{ app.request.getLocale()|upper }}
+				    <span class="caret"></span>
+	  			  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				    <li class="lang" data-href="{{ path('user_language', { lang : 'en' }) }}"><a href="#">EN</a></li>
+    				<li class="lang" data-href="{{ path('user_language', { lang : 'pl' }) }}"><a href="#">PL</a></li>
+				  </ul>
+				</div>
+			</li>
+			<li>
+				<a href="{{ path('user_profile') }}">
+					<i class="fa fa-user" data-toggle="tooltip" data-placement="bottom" title="{{ 'Profil'|trans }}"></i>
+				</a>
+			</li>
+			<li>
+				<a href="{{ logout_path('main') }}">
+					<i class="fa fa-sign-out" data-toggle="tooltip" data-placement="bottom" title="{{ 'Wyloguj się'|trans }}"></i>
+				</a>
+			</li>
+		</ul>
+	</nav> 
+{% endblock %}
+{%  set controllerName = get_controller_name() %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-2 col-md-2 sidebar">
+			{% include "OrganizerBundle:Panels:sidebar.html.twig" %}
+		</div>
+		<div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 main">
+			<div class="main-container">
+			{% block content %}
+			
+			{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>		
+
+</body>
+

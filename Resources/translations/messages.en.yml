@@ -1,0 +1,149 @@
+# Desktop
+
+Pulpit: Desktop
+Ważne wydarzenia: Important events
+Dzisiaj: Today
+Następne 7 dni: Next 7 days
+Następne 30 dni: Next 30 days
+
+# Calendar
+
+Kalendarz : Calendar
+Lista skrócona: Short list
+Zwiń zdarzenia: Collapse events
+Zwiń zdarzenie: Collapse event
+Rozwiń zdarzenia: Expand events
+Rozwiń zdarzenie: Expand event
+Dodaj zdarzenie: Add event
+Pobierz szablon z cyklicznego zdarzenia: Get template from a cyclical event
+Zamknij: Close
+Usuń element: Delete element
+Listy: Lists
+Nazwa: Name
+"-- Wybierz --" : "-- Select --"
+Opis: Description
+Dodaj: Add
+Zapisz zdarzenia: Save events
+Cykliczne zdarzenia: Cyclical Events
+Przypisz wagę: Add weight
+Zwiń: Collapse
+Nie udało się usunąć zdarzenia: Failed to delete the event
+Nie udało się odnaleźć list: Failed to find the lists
+Usuń: Delete
+Pokaż elementy: Show elements
+Schowaj elementy: Hide elements
+Wykryto niezapisane zmiany. Czy chcesz je zapisać? : Unsaved changes detected. Do you want to save them?
+Utwóz nową listę: Create a new list
+Pobierz cykliczne zdarzenie: Import cyclical event
+Lista standardowa: Normal list
+# Custom lists
+
+Podgląd: Preview
+Szukaj: Search
+Wyczyść filtry: Clear filters
+Dodaj listę: Add list
+"elementów:": "elements:"
+"utworzono:" : "Created at:"
+Nowa lista: New list
+Edytuj listę: Edit list
+Nowe zdarzenie: New event
+Edytuj zdarzenie: Edit event
+Edytuj: Edit
+Lista podręczna: List
+Elementy: Elements
+Czy na pewno chcesz usunąć tą listę? : Are you sure you want to delete this list?
+Nie udało się usunąć listy: Failed to delete the list
+Podręczne listy: Custom lists
+"Nazwa listy - rosnąco" : "List name - ascending"
+"Nazwa listy - malejąco" : "List name - descending"
+Nazwa listy: List name
+Dodaj element: Add element
+Usuń listę: Delete list
+
+# Cyclical events
+
+Cykliczne zdarzenie: Cyclical event
+Nazwa zdarzenia: Event name
+Opis zdarzenia: Event description
+Waga: Weight
+"Zdarzenie w każdy:": "Event in each:"
+Miesiąc: Month
+Dzień tygodnia: Day of the week
+Dzień miesiąca: Day of the month
+Dołączone listy: Attached lists
+Utwórz listę: Create list
+"Nazwa zdarzenia - rosnąco": "Event name - ascending"
+"Nazwa zdarzenia - malejąco": "Event name - descending"
+"Utworzono - rosnąco": "Created at - ascending"
+"Utworzono - malejąco": "Created at - descending"
+Opis: Desription
+Usuń zdarzenie: Delete event
+Dodaj cykliczne zdarzenie: Add cyclical event
+Czy na pewno chcesz usunąć to zdarzenie?: Are you sure you want to delete this event?
+Nie udało się usunąć zdarzenia: Failed to delete this event
+
+# Users
+
+Zmień hasło: Change password
+Zapisz: Save
+Nazwa Użytkownika: User Name
+Hasło: Password
+Zapamiętaj mnie: Remember me
+Zaloguj się: Sign In
+Zaloguj: Sign In
+Profil: Profile
+Brak: None
+Ostatnie logowanie: Last login
+Podaj prawidłowy adres e-mail: Please enter a valid email address
+Anuluj: Cancel
+Rejestracja: Register
+Zarejestruj: Register
+"Użytkownik o takiej nazwie już istnieje!": "The user with that name already exists!"
+
+# List generator
+
+Usuń zaznaczone elementy: Delete selected items
+Sortuj według: Sort by
+"-- Wybierz --": "-- Select --"
+Zaznaczone elementy zostaną usunięte. Czy chcesz kontynuować? : Selected elements will be deleted. Do you want to continue?
+Brak elementów do wyświetlenia : No items to display
+
+# Other
+
+Wyloguj się: Log out
+'-- Wybierz miesiąc --' : '-- Select month --'
+"-- Wybierz dzień --" : '-- Select day --'
+Styczeń: January 
+Luty: February 
+Marzec: March
+Kwiecień: April
+Maj: May
+Czerwiec: June 
+Lipiec: July
+Sierpień: August
+Wrzesień: September
+Październik: October
+Listopad: November
+Grudzień: December
+
+'Aby zaplanować wydarzenia przejdź do <b>kalendarza</b>.' : 'To schedule an event, go to <b>calendar</b>.'
+'Pulpit. Pokazane są tutaj ważniejsze wydarzenia ( z wagą od 7 w górę ) na przestrzeni najbliższych 30 dni.' : 'Desktop. Here are shown the important events (with weight of 7 or more) over the next 30 days.'
+'Jeśli jakieś zdarzenie pojawia się wieloktornie w twoim harmonogramie, możesz dodać je jako zdarzenie cykliczne - sekcja <b>cykliczne zdarzenia</b>.': 'If an event occurs repeatedly in your schedule, you can add it as a <b> cyclical event</b>.'
+'Dodatkowo do każdego zdarzenia możesz przypiąć listę - może to być na przykład lista zakupów, czy rzeczy do zabrania ze sobą. Ta sama lista może być używana w wielu zdarzeniach.' : 'Additionally, for each event you can attach a list - it can be for example a shopping list or the things to take with you. One list can be used in multiple events.'
+
+'Kalendarz. Wybierz datę, aby otworzyć okienko ze zdarzeniami danego dnia. Możesz tam dodawać nowe zdarzenia, lub importować je z dostępnych cyklicznych zdarzeń. Do każdego wydarzenia mogą być dołączone listy ( na przykład lista zakupów ). Mają one również swoją wagę.': 'Calendar. Select a date to open the window with the events of the day. There, you can add new events or import them from the available cyclical events. For each event you can include the list (for example, a shopping list). They also have their weight.'
+'Cykliczne zdarzenia. Ta sekcja służy do dodawania zdarzeń, które występują regularnie w Twoim harmonogramie, dzięki czemu nie ma potrzeby dodawania ich za każdym razem ręcznie. Cykliczne zdarzenia mogą mieć dołączone listy pomocnicze.' : Cyclical events. This section is used to add events that occur regularly in your schedule, so you do not have to add them manually every time. You can also attach a list to a cyclical event.
+'Listy pomocnicze. Przydają się, gdy dane zdarzenie jest związane z pewnym zbiorem informacji, na przykład lista osób zaproszonych na przyjęcie czy też plan lekcji. Dodane tutaj listy mogą być później dołączane do zdarzeń.': 'Lists. Useful when the event is associated with a certain set of information, such as a list of people invited to a party or lesson plan. Lists added here can be later attached to the event. ' 
+Sekcja użytkownika: User section
+Informacje: Info
+
+Niedziela: Sunday
+Poniedziałek: Monday
+Wtorek: Tuesday 
+Środa: Wednesday
+Czwartek: Thursday 
+Piątek: Friday
+Sobota: Saturday
+"-Bez nazwy-" : "-No name-"
+Idź do strony : Go to page
+Idź: Go

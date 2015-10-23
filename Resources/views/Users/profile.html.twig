@@ -1,0 +1,107 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ 'Profil'|trans }}{% endblock %}
+
+{% block header %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-info profile-panel">
+	<div class="panel-heading">
+		<h3 class="panel-title">{{ 'Profil'|trans }}</h3>
+		<a href="{{ path('user_change_password') }}" class="pass-btn"><button class="btn btn-warning">{{ 'Zmień hasło'|trans }}</button></a>
+	</div>
+	<div class="panel-body">
+		<table  class="table table-condensed profile-table">
+			<tr>
+				<td>{{ 'Nazwa użytkownika'|trans ~':' }}</td><td>{{ user.username }}</td>
+			</tr>
+			<tr>
+				<td>
+					{{ 'E-mail'|trans ~':' }}
+				</td>
+				<td>
+					<div data-has-email="{{ user.email is not null ? 1 : 0 }}" class="user-current-email">{{ user.email is not null ? user.email : 'Brak'|trans  }}</div>
+					<i class="fa fa-pencil-square-o user-email-change"  data-original-title="{{ 'Edytuj'|trans }}" data-placement="bottom" data-toggle="tooltip"></i>
+				</td>
+			</tr>
+			<tr>
+				<td>{{ 'Ostatnie logowanie'|trans ~':' }}</td><td>{{ user.lastLogin|date('Y-m-d') }}</td>
+			</tr>
+		
+		</table>
+	</div>
+</div>
+<script>
+	$('.user-email-change').click(function(){
+		var emailContainer = $(this).closest('td').find('.user-current-email');
+		var newEmail = emailContainer.find('#new-email');
+		
+		if(newEmail.length){ //If there is new email input
+			var newEmailValue = newEmail.val();
+			var elem = $(this);
+			
+			if(validateEmail(newEmailValue)){
+				$('.panel-body').showLoader();
+				
+				$.ajax({
+					type : 'post',
+					url : document.href,
+					data : { newEmailValue : newEmailValue },
+					success : function(){
+						emailContainer.attr('data-previous-content', newEmailValue); //Save current e-mail for edition purpose
+						emailContainer.attr('data-has-email', 1);
+						emailContainer.html(newEmailValue);
+						elem.toggleEmailClasses(); //Change "save" button to "edit" button
+					},
+					complete : function(){
+						$('.panel-body').hideLoader();
+					}
+				});
+			}else{
+				alert('{{ 'Podaj prawidłowy adres e-mail'|trans }}');
+			}
+		}else{//Show new email input
+			emailContainer.attr('data-previous-content', emailContainer.text());
+			var oldValue = emailContainer.attr('data-has-email') == '1' ? emailContainer.text() : '';
+			var newEmailInput = '<input id="new-email" value="' + oldValue + '"/>';
+			emailContainer.html(newEmailInput);
+			
+			$(this).toggleEmailClasses();
+		}
+
+		$('i[data-toggle=tooltip]').tooltip();
+	});
+
+	$(document).on('click', '.cancel-email-change', function(){
+		$(this).tooltip('hide');
+		var emailContainer = $(this).closest('td').find('.user-current-email');
+		emailContainer.html(emailContainer.attr('data-previous-content'));
+
+		$(this).closest('td').find('.user-email-change').toggleEmailClasses();
+		$(this).remove();
+		
+	});
+
+	$.fn.toggleEmailClasses = function(){ //Switch the button function - edit/save
+		$(this).tooltip('hide');
+		var parentTd = $(this).closest('td');
+		var cancelText = '{{ 'Anuluj'|trans }}';
+		$(this).toggleClass('fa-pencil-square-o')
+		.toggleClass('fa-check');
+
+		var newTitle = $(this).hasClass('fa-pencil-square-o') ? '{{ 'Edytuj'|trans }}' : '{{ 'Zapisz'|trans }}'; //Title will be "save" or "edit"
+		
+		var cancelIcon = parentTd.find('.cancel-email-change');
+		parentTd.find('.user-email-change').attr('data-original-title', newTitle);
+		if(!cancelIcon.length)
+			$('<i class="fa fa-times cancel-email-change" '+ 
+				'data-original-title="' + cancelText + '" data-placement="bottom" data-toggle="tooltip"></i>').insertAfter($(this));
+		else
+			cancelIcon.remove();
+				
+	}
+</script>
+{% endblock %}

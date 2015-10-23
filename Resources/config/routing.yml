@@ -1,0 +1,79 @@
+#calendar
+calendar_view:
+    path:     /calendar/{eventId}
+    defaults: { _controller: OrganizerBundle:Calendar:view, eventId : null }
+    
+day_card:
+  path: /dayCard
+  defaults: { _controller: OrganizerBundle:Calendar:dayCard}
+  
+#custom lists  
+  
+custom_lists:
+  path: /custom-lists
+  defaults: { _controller: OrganizerBundle:CustomLists:index}
+  
+list_generator:
+  path: /list-generator
+  defaults: { _controller: OrganizerBundle:ListGenerator:generate}
+  
+new_list:
+  path: /custom-lists/new
+  defaults: { _controller: OrganizerBundle:CustomLists:newList}
+  
+edit_list:
+  path: /custom-lists/edit/{id}
+  defaults: { _controller: OrganizerBundle:CustomLists:editList}
+  
+list_view:
+  path: /custom-lists/view/{id}
+  defaults: { _controller: OrganizerBundle:CustomLists:view}   
+
+#cyclical events
+
+cyclical_events:
+  path: /cyclical-events
+  defaults: { _controller: OrganizerBundle:CyclicalEvents:index}
+  
+new_cyclical_event:
+  path: /cyclical-events/new
+  defaults: { _controller: OrganizerBundle:CyclicalEvents:newCyclicalEvent}  
+  
+edit_cyclical_event:
+  path: /cyclical-events/edit/{id}
+  defaults: { _controller: OrganizerBundle:CyclicalEvents:editCyclicalEvent}  
+  
+cyclical_event_view:
+  path: /cyclical-events/view/{id}
+  defaults: { _controller: OrganizerBundle:CyclicalEvents:view}    
+  
+#desktop
+  
+org_desktop:
+  path: /
+  defaults: { _controller: OrganizerBundle:Desktop:index }
+  
+#users
+
+user_register:
+  path: /register
+  defaults: { _controller: OrganizerBundle:Users:register }
+  
+user_profile:
+  path: /profile
+  defaults: { _controller: OrganizerBundle:Users:profile }
+  
+user_language:
+  path: /language/{lang}
+  defaults: { _controller: OrganizerBundle:Users:language }
+  
+user_change_password:
+  path: profile/change-password
+  defaults: { _controller: OrganizerBundle:Users:changePassword }
+  
+#user_login:
+#  path: /login
+#  defaults: { _controller: OrganizerBundle:Users:login}  
+  
+#login_check:
+#    path: /login_check

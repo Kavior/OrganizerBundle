@@ -1,0 +1,50 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ 'Pulpit'|trans }} {% endblock %}
+
+{% block header %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div class="desktop-container">
+	<div class="desktop-top-panel">
+		{{ 'Ważne wydarzenia'|trans }}
+	</div>
+	{% set columns = [
+		{ 'title' : 'Dzisiaj'|trans , 'events' : todaysEvents },
+		{ 'title' : 'Następne 7 dni'|trans , 'events' : nextSevenDaysEvents },
+		{ 'title' : 'Następne 30 dni'|trans , 'events' : nextThirtyDaysEvents }
+	] %}
+	
+	{% set i = 0 %}
+	{% for eventsColumn in columns %}
+		{% set title = eventsColumn.title %}
+		{% set events = eventsColumn.events %}
+		<div class="desktop-panel {% if i == 0 %} first {% endif %}">
+			<div class="desktop-panel-header">
+				{{ title }}
+			</div>
+			<div class="desktop-events-container">
+				<ul class="desktop-events-list">
+				{% for event in events %}
+					<li>
+						<div class="col col-md-1 col-xs-1">
+							<i class="fa fa-asterisk"></i>
+						</div>
+						<div class="col col-md-11 col-xs-11">
+							<a href="{{ event.type == 'normal'  
+							? path('calendar_view', { eventId : event.id }) 
+							: path('cyclical_event_view', { id : event.id }) }}" target="_blank">
+								{{ event.name ~ ' (' ~ event.date ~ ')' }}
+					 		</a>
+					 	</div>
+					</li>	
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+		{% set i = i + 1 %}
+	{% endfor %}
+</div>
+{% endblock %}

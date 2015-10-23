@@ -1,0 +1,22 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ 'Listy'|trans }} {% endblock %}
+
+{% block header %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+{% set sort = [ { 'value':'ListName','sortType':'asc','title':'Nazwa listy - rosnąco' }, 
+	{ 'value':'ListName', 'sortType':'desc', 'title':'Nazwa listy - malejąco' },
+	{ 'value':'CreatedAt', 'sortType':'asc', 'title':'Utworzono - rosnąco' },
+	{ 'value':'CreatedAt', 'sortType':'desc', 'title':'Utworzono - malejąco' }
+
+] %}
+
+{% set additionalButtons = 'OrganizerBundle:CustomLists:buttons.html.twig' %}
+{% set listElementTemplate = 'OrganizerBundle:CustomLists:listElementTemplate.html.twig' %}
+{% include 'OrganizerBundle:Util:ListGenerator/list.html.twig' %}
+
+{% endblock %}

@@ -1,0 +1,17 @@
+<div class="listBox" data-pk="{{ element.idCustomList }}">
+	<input type="checkbox" class="list-checkbox"/>
+	<div class="list-name-container">
+		<a class="custom-list-name" href="{{ path('list_view', { id: element.idCustomList }) }}" 
+			target="_blank" data-toggle="tooltip" data-original-title="{{ 'Podgląd'|trans }}">
+			{{ element.listName != '' ? element.listName|shortText(35) : '-Bez nazwy-'|trans  }}
+		</a>
+	</div>
+	<div class="list-elem-count">{{ 'elementów:'|trans ~ ' ' ~ element.countCustomListElements }}</div>
+	<div class="list-elem-created">
+		<span class="created-text">{{ 'utworzono:'|trans }}</span>
+		<div class="date-created">{{ element.createdAt|date('Y-m-d')  }}</div>
+	</div>
+	<a href="{{ path('edit_list', { id : element.idCustomList }) }}" class="custom-list-edit">
+		<i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="left" title="{{ 'Edytuj'|trans }}"></i>
+	</a>
+</div>

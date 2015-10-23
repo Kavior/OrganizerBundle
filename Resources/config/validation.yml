@@ -1,0 +1,5 @@
+#FOS\UserBundle\Propel\User:
+#  constraints:
+#    - Propel\PropelBundle\Validator\Constraints\UniqueObject:
+#        fields: username 
+#        message: A user with that name already exists. 

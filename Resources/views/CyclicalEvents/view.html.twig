@@ -1,0 +1,89 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ 'Cykliczne zdarzenie'|trans }} {% endblock %}
+
+{% block header %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+	<div class="cyclical-event-view panel panel-default container">
+		<div class="row">
+			<div class=" col-md-12 col-xs-12">
+				<div class="alert alert-info row">
+					<div class="col col-md-6 col-xs-6">
+					{{ cyclicalEvent.cyclicalEventName }}
+					</div>
+					<div class="col col-md-6 col-xs-6 buttons-col">
+						<a href="{{ path('edit_cyclical_event', { id : cyclicalEvent.idCyclicalEvent }) }}">
+							<button class="btn btn-warning">{{ "Edytuj zdarzenie"|trans }}</button>
+						</a>
+						<a href="#" class="ce-remove" data-pk="{{ cyclicalEvent.idCyclicalEvent }}">
+							<button class="btn btn-danger">{{ "Usuń zdarzenie"|trans }}</button>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col col-md-6 col-xs-6">
+				<table  class="table table-condensed">
+					<tr>
+						<td>{{ 'Opis'|trans ~ ': ' }}</td><td style="font-size: 12px;">{{ cyclicalEvent.cyclicalEventDescription }}</td>
+					</tr>
+					<tr>
+						<td>{{ 'Waga'|trans ~': ' }}</td><td>{{ cyclicalEvent.cyclicalEventWeight }}</td>
+					</tr>
+					<tr>
+					<tr>
+					{% if cyclicalEvent.cyclicalEventWeekDay is not null %}
+					<tr>
+						<td>{{ 'Dzień tygodnia'|trans }}:</td> <td>{{ cyclicalEvent.cyclicalEventWeekDay|dayOfAWeek }}</td>
+					</tr>
+					{% endif %}
+					{% if cyclicalEvent.cyclicalEventMonth is not null %}
+					<tr>
+						<td>{{ 'Miesiąc'|trans }}:</td><td>{{ cyclicalEvent.cyclicalEventMonth|month }}</td>
+					</tr>
+					{% endif %}
+					{% if cyclicalEvent.cyclicalEventDay is not null %}
+					<tr>
+						<td>{{ 'Dzień miesiąca'|trans }}:</td><td>{{ cyclicalEvent.cyclicalEventDay }}</td>
+					</tr>
+					{% endif %}
+				</table>
+			</div>
+			<div class="col col-md-6 col-xs-6">
+				<div class="ce-lists-header">{{ 'Dołączone listy'|trans }}</div>
+				<ul class="cylical-event-view-lists">
+					{% set lists = cyclicalEvent.getCustomListss %}
+					{% for list in lists %}
+					<li class="view-list">
+						<a href="{{ path('list_view', { id: list.idCustomList } ) }}" target="_blank">{{ list.listName }}</a>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script> 
+		$('.ce-remove').click(function(){ //Remove cyclical event
+			var conf = confirm('{{ 'Czy na pewno chcesz usunąć to zdarzenie?'|trans }}');
+			if(!conf) return false;
+			
+			var eventId = $(this).data('pk');
+			
+			$.ajax({
+				type : 'post',
+				url : document.href,
+				data: { deletedEventId : eventId },
+				success : function(){
+					window.location.href = '{{ path('cyclical_events') }}';
+				},
+				error : function(){
+					alert( '{{ 'Nie udało się usunąć zdarzenia'|trans }}' );
+				}
+			});
+		});
+	</script>
+{% endblock %}

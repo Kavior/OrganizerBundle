@@ -1,0 +1,89 @@
+{% extends 'OrganizerBundle::layout.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+{# 	<div class="col col-md-8 col-xs-8">#}
+		<div class="panel panel-info custom-list-form">
+	      <div class="panel-heading">
+	        <h3 class="panel-title">{{ title }}</h3>
+	      </div>
+	      <div class="panel-body">
+	      	{{ form_start(form) }}
+			    {{ form_row(form.listName) }}
+			    <h3>{{ "Elementy"|trans }}</h3>
+			    <ul class="elements" 
+			    data-prototype="{% filter escape %}{% include 'OrganizerBundle:CustomLists:elementTemplate.html.twig'  %}{% endfilter %}">
+			    {% for tag in form.customListElements %}
+		            <li>
+		            	<div class="custom-list-element">
+							<div>
+								 {{ form_row(tag.elementName) }}
+							</div>
+							<div>
+								{{ form_row(tag.elementDescription) }}
+							</div>
+							<div class="element-buttons">
+								<i class="fa fa-times remove-element" title="{{ 'Usuń'|trans }}" data-placement="left" data-toggle="tooltip"></i>
+							</div>
+						</div>
+		            </li>
+		        {% endfor %}
+			    </ul>
+			    {% do form.customListElements.setRendered %}
+			    
+			    <div class="form-buttons">{{ form_widget(form.zapisz) }}</div>
+			{{ form_end(form) }}
+	      </div>
+	    </div>
+{# 	</div>#}
+	<script>
+	var $collectionHolder;
+
+	var addElemText = '{{ 'Dodaj element'|trans }}';
+	//Button to add new items collection element
+	var $newElementButton = $('<a href="#" class="add_element_link"><button type="button" class="btn btn-primary btn-sm">'+ 
+			addElemText +'</button></a>');
+	var $newLinkLi = $('<li></li>');
+	
+	jQuery(document).ready(function() {
+	    $collectionHolder = $('.elements');
+		//Insert "add element" button to the form
+	    $newElementButton.insertBefore($collectionHolder);
+	    $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+	    $newElementButton.on('click', function(e) {
+	        e.preventDefault();
+	        addElementForm($collectionHolder, $newLinkLi);
+	    });
+
+	    //Add list element to the collection
+	    function addElementForm($collectionHolder, $newLinkLi) {
+
+	        var prototype = $collectionHolder.data('prototype');
+	        var index = $collectionHolder.data('index');
+	        var newForm = prototype.replace(/__name__/g, index);
+
+	        $collectionHolder.data('index', index + 1);
+
+	        var $newFormLi = $('<li></li>').append(newForm);
+	        $collectionHolder.append($newFormLi);
+	        $('.custom-list-element .cle-form-name').last().focus();
+	        elementsList = document.getElementsByClassName('elements')[0];
+	        elementsList.scrollTop = elementsList.scrollHeight;
+	    }
+
+	    $('.remove-element').off('click');
+	    //Remove element from collection
+	    $(document).on('click', '.remove-element', function(){
+	    	var removedListElem = $(this).closest('.custom-list-element').closest('li');
+	        removedListElem.fadeOut(300, function(){ $(this).remove();});
+	    });
+	    
+	});
+	</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+<div class="custom-list-element">
+	<div id="customList_customListElements___name__">
+		<div>
+			<label for="customList_customListElements___name___elementName">{{ 'Nazwa'|trans }}</label>
+			<input type="text" id="customList_customListElements___name___elementName" class="cle-form-name form-control"
+				name="customList[customListElements][__name__][elementName]"
+				maxlength="45" class="form-control" />
+		</div>
+		<div>
+			<label
+				for="customList_customListElements___name___elementDescription">{{ 'Opis'|trans }}</label>
+				<textarea type="text" id="customList_customListElements___name___elementDescription"
+				name="customList[customListElements][__name__][elementDescription]"
+				maxlength="45" class="form-control"></textarea>
+		</div>
+		<input type="hidden" id="customList_customListElements___name___elementOrder"
+			name="customList[customListElements][__name__][elementOrder]" />
+	</div>
+	<div class="element-buttons">
+		<i class="fa fa-times remove-element" title="{{ 'Usuń'|trans }}" data-placement="left" data-toggle="tooltip"></i>
+	</div>
+</div>
